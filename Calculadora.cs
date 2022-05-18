@@ -1,17 +1,26 @@
 using System;
+using System.Collections.Generic;
 
 namespace E05_Calculadora_v04
 {
     class Calculadora
     {
+        /*
+         * V4.3
+         * **********
+         * - Collection used to menu construction
+         * - Added try...catch to handle exceptions
+         */
+
         #region Variables
-        public static string ver = "v4.2";
- 
+        public static string ver = "v4.3";
+
+
         #endregion
 
         #region Properties
-        public int FirstNumber { get; set; }
-        public int SecondNumber { get; set; }
+        public double FirstNumber { get; set; }
+        public double SecondNumber { get; set; }
         public string Operand { get; set; }
         public double Result { get; set; }
         #endregion
@@ -27,7 +36,7 @@ namespace E05_Calculadora_v04
         }
         // 2 values
 
-        public Calculadora(int a, int b)
+        public Calculadora(double a, double b)
         {
             FirstNumber = a;
             SecondNumber = b;
@@ -36,7 +45,7 @@ namespace E05_Calculadora_v04
         }
         // 2 values plus operand
 
-        public Calculadora(int a, int b, string c)
+        public Calculadora(double a, double b, string c)
         {
             FirstNumber = a;
             SecondNumber = b;
@@ -50,41 +59,39 @@ namespace E05_Calculadora_v04
         // Complete
         public static void WriteMenu(bool keyCheck)
         {
-            string[] operInvalid = new string[]
-            {
-                new string('*', 40),
-                $"* MENU * Calculator {Calculadora.ver}",
-                new string ('*', 40),
-                "* Please insert a valid option",
-                new string ('*', 40),
-                "* (1) ADDITION",
-                "* (2) SUBTRACTION",
-                "* (3) MULTIPLICATION",
-                "* (4) DIVISION",
-                new string ('*', 40),
-                "* (X) EXIT",
-                new string ('*', 40)
-            };
+            Queue<string> operInvalid = new Queue<string>();
 
-            string[] operValid = new string[]
-            {
-                new string('*', 40),
-                $"* MENU * Calculator {Calculadora.ver}",
-                new string ('*', 40),
-                "* (1) ADDITION",
-                "* (2) SUBTRACTION",
-                "* (3) MULTIPLICATION",
-                "* (4) DIVISION",
-                new string ('*', 40),
-                "* (X) EXIT",
-                new string ('*', 40)
-        };
+            operInvalid.Enqueue(new string('*', 40));
+            operInvalid.Enqueue($"* MENU * Calculator {Calculadora.ver}");
+            operInvalid.Enqueue(new string('*', 40));
+            operInvalid.Enqueue("* Please insert a valid option");
+            operInvalid.Enqueue(new string('*', 40));
+            operInvalid.Enqueue("* (1) ADDITION");
+            operInvalid.Enqueue("* (2) SUBTRACTION");
+            operInvalid.Enqueue("* (3) MULTIPLICATION");
+            operInvalid.Enqueue("* (4) DIVISION");
+            operInvalid.Enqueue(new string('*', 40));
+            operInvalid.Enqueue("* (X) EXIT");
+            operInvalid.Enqueue(new string('*', 40));
+
+            Queue<string> operValid = new Queue<string>();
+
+            operValid.Enqueue(new string('*', 40));
+            operValid.Enqueue($"* MENU * Calculator {Calculadora.ver}");
+            operValid.Enqueue(new string('*', 40));
+            operValid.Enqueue("* (1) ADDITION");
+            operValid.Enqueue("* (2) SUBTRACTION");
+            operValid.Enqueue("* (3) MULTIPLICATION");
+            operValid.Enqueue("* (4) DIVISION");
+            operValid.Enqueue(new string('*', 40));
+            operValid.Enqueue("* (X) EXIT");
+            operValid.Enqueue(new string('*', 40));
 
             if (keyCheck)
             {
-                for (int i = 0; i < operValid.GetLength(0); i++)
+                foreach (string item in operValid)
                 {
-                    Console.WriteLine(operValid[i]);
+                    Console.WriteLine(item);
                 }
             }
             else
@@ -114,28 +121,84 @@ namespace E05_Calculadora_v04
             return menuKey;
         }
 
-        public static int ReadFirstValue()
+        public static double ReadFirstValue()
         {
-            Console.Write("Write the first number: ");
-            int fst = Convert.ToInt32(Console.ReadLine());
-            return fst;
+            try
+            {
+                Console.Write("Write the first number: ");
+                double fst = Convert.ToDouble(Console.ReadLine());
+                return fst;
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Please insert a valid number!");
+                Console.WriteLine("Press enter to continue...");
+                Console.WriteLine();
+                Console.ReadKey();
+                return ReadFirstValue();
+            }
         }
 
-        public static int ReadSndValue()
+        public static double ReadSndValue()
         {
-            Console.Write("Write the second number: ");
-            int snd = Convert.ToInt32(Console.ReadLine());
-            return snd;
+            try
+            {
+                Console.Write("Write the second number: ");
+                double snd = Convert.ToDouble(Console.ReadLine());
+                return snd;
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Please insert a valid number!");
+                Console.WriteLine("Press enter to continue...");
+                Console.WriteLine();
+                Console.ReadKey();
+                return ReadSndValue();
+            }
         }
 
         public static Calculadora GetResult(Calculadora c)
         {
             switch (c.Operand)
             {
-                case "1": { c.Result = c.FirstNumber + c.SecondNumber; c.Operand = "+"; return c; }; 
-                case "2": { c.Result = c.FirstNumber - c.SecondNumber; c.Operand = "-"; return c; }; 
-                case "3": { c.Result = c.FirstNumber * c.SecondNumber; c.Operand = "x"; return c; }; 
-                case "4": { c.Result = (double)c.FirstNumber / (double)c.SecondNumber; c.Operand = "/"; return c; };
+                case "1":
+                    {
+                        c.Result = c.FirstNumber + c.SecondNumber;
+                        c.Operand = "+";
+                        return c;
+                    };
+
+                case "2":
+                    {
+                        c.Result = c.FirstNumber - c.SecondNumber;
+                        c.Operand = "-";
+                        return c;
+                    };
+
+                case "3":
+                    {
+                        c.Result = c.FirstNumber * c.SecondNumber;
+                        c.Operand = "x";
+                        return c;
+                    };
+
+                case "4":
+                    {
+                        try
+                        {
+                            c.Result = c.FirstNumber / c.SecondNumber;
+                            c.Operand = "/";
+                            return c;
+                        }
+                        catch (DivideByZeroException)
+                        {
+                            Console.WriteLine("Should not divide by zero!");
+                            Console.WriteLine("Press enter to continue...");
+                            Console.WriteLine();
+                            return c;
+                        }
+
+                    };
                 default: return c;
             }
         }
