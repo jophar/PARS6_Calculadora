@@ -10,6 +10,10 @@ namespace E05_Calculadora_v04
          * **********
          * - Collection used to menu construction
          * - Added try...catch to handle exceptions
+         * 
+         * v4.4
+         * **********
+         * - Remake of calculation method to use a dictionary
          */
 
         #region Variables
@@ -66,10 +70,10 @@ namespace E05_Calculadora_v04
             operInvalid.Enqueue(new string('*', 40));
             operInvalid.Enqueue("* Please insert a valid option");
             operInvalid.Enqueue(new string('*', 40));
-            operInvalid.Enqueue("* (1) ADDITION");
-            operInvalid.Enqueue("* (2) SUBTRACTION");
-            operInvalid.Enqueue("* (3) MULTIPLICATION");
-            operInvalid.Enqueue("* (4) DIVISION");
+            operInvalid.Enqueue("* (+) ADDITION");
+            operInvalid.Enqueue("* (-) SUBTRACTION");
+            operInvalid.Enqueue("* (*) MULTIPLICATION");
+            operInvalid.Enqueue("* (/) DIVISION");
             operInvalid.Enqueue(new string('*', 40));
             operInvalid.Enqueue("* (X) EXIT");
             operInvalid.Enqueue(new string('*', 40));
@@ -79,10 +83,10 @@ namespace E05_Calculadora_v04
             operValid.Enqueue(new string('*', 40));
             operValid.Enqueue($"* MENU * Calculator {Calculadora.ver}");
             operValid.Enqueue(new string('*', 40));
-            operValid.Enqueue("* (1) ADDITION");
-            operValid.Enqueue("* (2) SUBTRACTION");
-            operValid.Enqueue("* (3) MULTIPLICATION");
-            operValid.Enqueue("* (4) DIVISION");
+            operValid.Enqueue("* (+) ADDITION");
+            operValid.Enqueue("* (-) SUBTRACTION");
+            operValid.Enqueue("* (*) MULTIPLICATION");
+            operValid.Enqueue("* (/) DIVISION");
             operValid.Enqueue(new string('*', 40));
             operValid.Enqueue("* (X) EXIT");
             operValid.Enqueue(new string('*', 40));
@@ -105,7 +109,7 @@ namespace E05_Calculadora_v04
 
         public static bool KeyCheck(string c)
         {
-            if (c == "1" || c == "2" || c == "3" || c == "4")
+            if (c == "+" || c == "-" || c == "*" || c == "/")
             {
                 return true;
             }
@@ -113,12 +117,6 @@ namespace E05_Calculadora_v04
             {
                 return false;
             }
-        }
-
-        public static string ReadMenu()
-        {
-            string menuKey = Console.ReadLine();
-            return menuKey;
         }
 
         public static double ReadFirstValue()
@@ -157,50 +155,21 @@ namespace E05_Calculadora_v04
             }
         }
 
-        public static Calculadora GetResult(Calculadora c)
+        public static double GetResult(Calculadora c)
         {
-            switch (c.Operand)
+            double res = 0;
+
+            Dictionary<string, double> options = new Dictionary<string, double>()
             {
-                case "1":
-                    {
-                        c.Result = c.FirstNumber + c.SecondNumber;
-                        c.Operand = "+";
-                        return c;
-                    };
+                {"+", (c.FirstNumber + c.SecondNumber) },
+                {"-", (c.FirstNumber - c.SecondNumber) },
+                {"*", (c.FirstNumber * c.SecondNumber) },
+                {"/", (c.FirstNumber / c.SecondNumber) }
+            };
 
-                case "2":
-                    {
-                        c.Result = c.FirstNumber - c.SecondNumber;
-                        c.Operand = "-";
-                        return c;
-                    };
+            res = options[c.Operand];
 
-                case "3":
-                    {
-                        c.Result = c.FirstNumber * c.SecondNumber;
-                        c.Operand = "x";
-                        return c;
-                    };
-
-                case "4":
-                    {
-                        try
-                        {
-                            c.Result = c.FirstNumber / c.SecondNumber;
-                            c.Operand = "/";
-                            return c;
-                        }
-                        catch (DivideByZeroException)
-                        {
-                            Console.WriteLine("Should not divide by zero!");
-                            Console.WriteLine("Press enter to continue...");
-                            Console.WriteLine();
-                            return c;
-                        }
-
-                    };
-                default: return c;
-            }
+            return res;
         }
 
         public static void PrintResult(Calculadora c)

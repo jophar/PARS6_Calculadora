@@ -15,7 +15,7 @@ namespace E05_Calculadora_v04
             while (check != "x" && check != "X")
             {
 
-                check = Calculadora.ReadMenu();
+                check = Console.ReadLine();
 
                 Console.Clear();
 
@@ -27,11 +27,16 @@ namespace E05_Calculadora_v04
                 {
                     // Creates a new object eveytime it makes a calculation
                     // receiving three elements that were defined in the constructor
+
                     double a = Calculadora.ReadFirstValue();
                     double b = Calculadora.ReadSndValue();
+
                     Calculadora calc = new Calculadora(a, b, check);
 
-                    Calculadora.PrintResult(Calculadora.GetResult(calc));
+                    calc.Result = Calculadora.GetResult(calc);
+
+                    Calculadora.PrintResult(calc);
+
                     Console.Clear();
                     Calculadora.WriteMenu(true);
                 }
